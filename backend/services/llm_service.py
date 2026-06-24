@@ -2,7 +2,7 @@ import os
 from groq import Groq
 
 client = Groq(
-    api_key=os.getenv("groq_key")
+    api_key=os.getenv("GROK_API_KEY")
 )
 
 def ask_llm(prompt):
