@@ -18,7 +18,7 @@ Pillow
 
 sqlalchemy
 starlette
-ollama 
+
 
 python-dotenv
 
