@@ -1,21 +1,52 @@
-import ollama
+import json
+from services.llm_service import ask_llm
 
-def generate_description(features, price):
 
-    prompt = f"""
-    Write an attractive real estate description.
+def recommendation_agent(state):
 
-    Features:
-    {features}
+    print("Recommendation Agent Started")
 
-    Price: ₹{price}
-    """
+    with open("database/buyers.json", "r") as f:
+        buyers = json.load(f)
 
-    response = ollama.chat(
-        model='llama3.2',
-        messages=[
-            {'role': 'user', 'content': prompt}
-        ]
-    )
+    matched_buyers = []
 
-    return response['message']['content']
+    property_location = state["location"]
+    property_price = state["price"]
+    bedrooms = state["features"]["bedroom"]
+
+    for buyer in buyers:
+
+        prompt = f"""
+Property:
+Location = {property_location}
+Price = {property_price}
+Bedrooms = {bedrooms}
+
+Buyer:
+Location = {buyer["location"]}
+Budget = {buyer["budget"]}
+Bedrooms = {buyer["bedrooms"]}
+
+Give output exactly like:
+
+Score: xx
+Reason: xxxx
+"""
+
+        answer = ask_llm(prompt)
+
+        print(answer)
+
+        matched_buyers.append(
+            {
+                "name": buyer["buyer_name"],
+                "phone": buyer["phone"],
+                "email": buyer["email"],
+                "analysis": answer
+            }
+        )
+
+    state["recommended_buyers"] = matched_buyers
+
+    return state
