@@ -1,5 +1,5 @@
 import json
-import ollama
+from services.llm_service import ask_llm
 
 
 def recommendation_agent(state):
@@ -17,13 +17,7 @@ def recommendation_agent(state):
 
     for buyer in buyers:
 
-        response = ollama.chat(
-            model="llama3.2",
-            messages=[
-                {
-                    "role": "user",
-                    "content": f"""
-
+        prompt = f"""
 Property:
 Location = {property_location}
 Price = {property_price}
@@ -38,22 +32,20 @@ Give output exactly like:
 
 Score: xx
 Reason: xxxx
-
 """
-                }
-            ]
-        )
 
-        answer = response["message"]["content"]
+        answer = ask_llm(prompt)
 
         print(answer)
 
-        matched_buyers.append({
-    "name": buyer["buyer_name"],
-    "phone": buyer["phone"],
-    "email": buyer["email"],
-    "analysis": answer
-})
+        matched_buyers.append(
+            {
+                "name": buyer["buyer_name"],
+                "phone": buyer["phone"],
+                "email": buyer["email"],
+                "analysis": answer
+            }
+        )
 
     state["recommended_buyers"] = matched_buyers
 
