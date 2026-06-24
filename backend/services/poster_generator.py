@@ -2,6 +2,7 @@ import os
 import textwrap
 import ollama
 from PIL import Image, ImageDraw, ImageFont
+from services.llm_service import ask_llm
 
 
 def generate_poster(
@@ -18,26 +19,16 @@ def generate_poster(
         bedrooms,
         bathrooms):
 
-    response = ollama.chat(
-        model="llama3.2",
-        messages=[
-            {
-                "role": "user",
-                "content": f"""
-Generate a short professional title for a real estate listing.
+
+    title = ask_llm(f"""
+Generate a short professional title.
 
 Location: {location}
 Bedrooms: {bedrooms}
 Bathrooms: {bathrooms}
 
 Return only one title.
-"""
-            }
-        ]
-    )
-
-    title = response["message"]["content"].strip()
-
+""").strip()
     # Fonts
     title_font = ImageFont.truetype("arialbd.ttf", 42)
     section_font = ImageFont.truetype("arialbd.ttf", 30)
