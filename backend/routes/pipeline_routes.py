@@ -3,6 +3,7 @@ from fastapi import APIRouter, UploadFile, File, Form
 import os
 import shutil
 from graph.realestate_graph import app_graph
+from typing import List
 
 router = APIRouter(
     prefix="/pipeline",
@@ -19,8 +20,7 @@ async def run_pipeline(
     area: int = Form(...),
     floor: int = Form(...),
     status: str = Form(...),
-    files: list[UploadFile] = File(...)):
-
+    files: List[UploadFile] = File(...)
     image_paths = []
 
     os.makedirs("static/uploads", exist_ok=True)
