@@ -1,9 +1,16 @@
+
 import { useState } from "react";
-await axios.post(
-    "http://127.0.0.1:8000/pipeline/",
-    formData
-);
+import api from "../services/api";
+
 function PropertyUpload() {
+
+    const [ownerName, setOwnerName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
+    const [location, setLocation] = useState("");
+    const [area, setArea] = useState("");
+    const [floor, setFloor] = useState("");
+    const [status, setStatus] = useState("");
 
     const [files, setFiles] = useState([]);
     const [result, setResult] = useState(null);
@@ -12,180 +19,183 @@ function PropertyUpload() {
 
     const handleUpload = async () => {
 
-    setLoading(true);
+        if (files.length === 0) {
+            alert("Please select images");
+            return;
+        }
 
-    const formData = new FormData();
-    formData.append("owner_name", ownerName);
-    formData.append("phone", phone);
-    formData.append("email", email);
-    formData.append("location", location);
-    formData.append("area", area);
-    formData.append("floor", floor);
-    formData.append("status", status);
+        setLoading(true);
 
-    for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-    }
+        const formData = new FormData();
 
-    try {
-                await api.post(
-                    "/pipeline/",
-                    formData
-                );
-        console.log("Response received:");
-        //console.log(response.data);
-        console.log(response.data);   // <-- Add this
+        formData.append("owner_name", ownerName);
+        formData.append("phone", phone);
+        formData.append("email", email);
+        formData.append("location", location);
+        formData.append("area", area);
+        formData.append("floor", floor);
+        formData.append("status", status);
 
-        setResult(response.data);
-        setLoading(false);
-    }catch (error) {
+        for (let i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
+        }
 
-    console.log("FULL ERROR:", error);
+        try {
 
-    console.log("error.message =", error.message);
+            const response = await api.post(
+                "/pipeline/",
+                formData
+            );
 
-    console.log("error.response =", error.response);
+            console.log(response.data);
 
-    console.log("error.request =", error.request);
+            setResult(response.data);
 
-    setLoading(false);
+        } catch (error) {
 
-}
-};
-   return (
-<div className="container mt-4">
+            console.log(error);
 
-    <h1 className="text-center mb-4">
-        🏠 AI Real Estate Platform
-    </h1>
+            if (error.response) {
+                console.log(error.response.data);
+                alert(JSON.stringify(error.response.data));
+            } else {
+                alert("Upload failed");
+            }
 
-    <div className="card p-4 shadow">
+        } finally {
 
-        <input
-            className="form-control"
-            type="file"
-            multiple
-            onChange={(e) => {
-                setFiles(e.target.files);
+            setLoading(false);
 
-                if (e.target.files.length > 0) {
-                    setPreview(
-                        URL.createObjectURL(
-                            e.target.files[0]
-                        )
-                    );
-                }
-            }}
-        />
+        }
+    };
 
-        <br />
+    return (
+        <div className="container mt-4">
 
-        {preview && (
-            <img
-                src={preview}
-                className="img-fluid rounded"
-                width="400"
-                alt=""
-            />
-        )}
+            <h1 className="text-center mb-4">
+                🏠 AI Real Estate Platform
+            </h1>
 
-        <br />
+            <div className="card p-4 shadow">
 
-        <button
-            className="btn btn-primary"
-            onClick={handleUpload}
-        >
-            Upload
-        </button>
-
-        <br />
-
-        {loading && (
-            <h4>Processing Images...</h4>
-        )}
-
-    </div>
-
-    <br />
-
-    {
-        result &&
-        <div className="card p-4 shadow">
-
-            <h2>🏠 Detected Rooms</h2>
-
-            <ul>
-                {
-                    result.labels.map(
-                        (label, index) => (
-                            <li key={index}>
-                                {label}
-                            </li>
-                        )
-                    )
-                }
-            </ul>
-
-            <h2>📊 Features</h2>
-
-            <table className="table table-bordered">
-
-                <thead>
-                    <tr>
-                        <th>Feature</th>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    {
-                        Object.entries(result.features).map(
-                            ([key, value]) => (
-                                <tr key={key}>
-                                    <td>{key}</td>
-                                    <td>{value}</td>
-                                </tr>
-                            )
-                        )
-                    }
-
-                </tbody>
-
-            </table>
-
-            <h2 className="text-success">
-                💰 ₹ {result.predicted_price}
-            </h2>
-
-            <h2>📝 Description</h2>
-
-            <div className="alert alert-info">
-                {result.description}
-            </div>
-
-            <h2>Advertisement Poster</h2>
-
-                <img
-                    src={`http://127.0.0.1:8000/${result.poster}`}
-                    width="500"
-                    alt="Property Poster"
+                <input
+                    className="form-control mb-2"
+                    placeholder="Owner Name"
+                    value={ownerName}
+                    onChange={(e) => setOwnerName(e.target.value)}
                 />
 
-                <br /><br />
+                <input
+                    className="form-control mb-2"
+                    placeholder="Phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                />
 
-                <a
-                    href={`http://127.0.0.1:8000/${result.poster}`}
-                    download
+                <input
+                    className="form-control mb-2"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+
+                <input
+                    className="form-control mb-2"
+                    placeholder="Location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                />
+
+                <input
+                    className="form-control mb-2"
+                    placeholder="Area"
+                    value={area}
+                    onChange={(e) => setArea(e.target.value)}
+                />
+
+                <input
+                    className="form-control mb-2"
+                    placeholder="Floor"
+                    value={floor}
+                    onChange={(e) => setFloor(e.target.value)}
+                />
+
+                <input
+                    className="form-control mb-3"
+                    placeholder="Status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                />
+
+                <input
+                    className="form-control"
+                    type="file"
+                    multiple
+                    onChange={(e) => {
+
+                        setFiles(e.target.files);
+
+                        if (e.target.files.length > 0) {
+
+                            setPreview(
+                                URL.createObjectURL(
+                                    e.target.files[0]
+                                )
+                            );
+
+                        }
+
+                    }}
+                />
+
+                <br />
+
+                {
+                    preview &&
+                    <img
+                        src={preview}
+                        width="400"
+                        alt="preview"
+                        className="img-fluid rounded"
+                    />
+                }
+
+                <br />
+
+                <button
+                    className="btn btn-primary"
+                    onClick={handleUpload}
                 >
-                    <button>Download Poster</button>
-                </a>
+                    Upload
+                </button>
+
+                <br />
+
+                {
+                    loading &&
+                    <h4>Processing Images...</h4>
+                }
+
+            </div>
+
+            <br />
+
+            {
+                result &&
+                <div className="card p-4 shadow">
+
+                    <h2>Detected Rooms</h2>
+
+                    <pre>
+                        {JSON.stringify(result, null, 2)}
+                    </pre>
+
+                </div>
+            }
 
         </div>
-    }
-
-</div>
-);
+    );
 }
 
 export default PropertyUpload;
+
