@@ -11,17 +11,10 @@ joblib
 
 torch
 torchvision
-torchaudio
 
-opencv-python
 Pillow
 
-sqlalchemy
-starlette
-
-
 python-dotenv
-
 
 google-generativeai
 
@@ -33,4 +26,3 @@ twilio
 requests
 
 xgboost
-
