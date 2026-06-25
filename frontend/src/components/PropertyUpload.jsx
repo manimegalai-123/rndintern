@@ -1,6 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
-
+await axios.post(
+    "http://127.0.0.1:8000/pipeline/",
+    formData
+);
 function PropertyUpload() {
 
     const [files, setFiles] = useState([]);
@@ -13,17 +15,23 @@ function PropertyUpload() {
     setLoading(true);
 
     const formData = new FormData();
+    formData.append("owner_name", ownerName);
+    formData.append("phone", phone);
+    formData.append("email", email);
+    formData.append("location", location);
+    formData.append("area", area);
+    formData.append("floor", floor);
+    formData.append("status", status);
 
     for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i]);
     }
 
     try {
-
-        const response = await axios.post(
-            "http://127.0.0.1:8000/pipeline/",
-            formData
-        );
+                await api.post(
+                    "/pipeline/",
+                    formData
+                );
         console.log("Response received:");
         //console.log(response.data);
         console.log(response.data);   // <-- Add this

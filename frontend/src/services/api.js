@@ -1,10 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import axios from "axios";
 
-const response = await axios.post(
-  `${API_URL}/pipeline/`,
-  formData
-);
-
-
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL
+});
 
 export default api;
