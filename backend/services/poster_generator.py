@@ -1,6 +1,5 @@
 import os
 import textwrap
-import ollama
 from PIL import Image, ImageDraw, ImageFont
 from services.llm_service import ask_llm
 
