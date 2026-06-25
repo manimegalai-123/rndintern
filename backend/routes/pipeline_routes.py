@@ -21,6 +21,7 @@ async def run_pipeline(
     floor: int = Form(...),
     status: str = Form(...),
     files: List[UploadFile] = File(...)
+):
     image_paths = []
 
     os.makedirs("static/uploads", exist_ok=True)
