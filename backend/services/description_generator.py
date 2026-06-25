@@ -1,52 +1,17 @@
-import json
 from services.llm_service import ask_llm
 
 
-def recommendation_agent(state):
+def generate_description(features, price):
 
-    print("Recommendation Agent Started")
+    prompt = f"""
+Write an attractive professional real estate description.
 
-    with open("database/buyers.json", "r") as f:
-        buyers = json.load(f)
+Property Features:
+{features}
 
-    matched_buyers = []
+Price: ₹{price}
 
-    property_location = state["location"]
-    property_price = state["price"]
-    bedrooms = state["features"]["bedroom"]
-
-    for buyer in buyers:
-
-        prompt = f"""
-Property:
-Location = {property_location}
-Price = {property_price}
-Bedrooms = {bedrooms}
-
-Buyer:
-Location = {buyer["location"]}
-Budget = {buyer["budget"]}
-Bedrooms = {buyer["bedrooms"]}
-
-Give output exactly like:
-
-Score: xx
-Reason: xxxx
+Keep it short, attractive, and suitable for a property listing website.
 """
 
-        answer = ask_llm(prompt)
-
-        print(answer)
-
-        matched_buyers.append(
-            {
-                "name": buyer["buyer_name"],
-                "phone": buyer["phone"],
-                "email": buyer["email"],
-                "analysis": answer
-            }
-        )
-
-    state["recommended_buyers"] = matched_buyers
-
-    return state
+    return ask_llm(prompt)
